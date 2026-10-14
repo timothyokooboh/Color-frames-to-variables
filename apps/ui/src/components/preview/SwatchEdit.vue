@@ -35,7 +35,17 @@ const id = useId()
     <p v-if="reviewed" class="whitespace-pre-wrap break-words text-xs">
       Full variable path: {{ reviewed.fullPath }}
     </p>
-    <p :id="`${id}-status`" class="text-xs" :class="{ 'text-destructive': reviewed?.message }">
+    <p
+      :id="`${id}-status`"
+      class="text-xs"
+      :class="
+        reviewed?.message
+          ? 'text-destructive'
+          : reviewed?.status === 'ready'
+            ? 'text-success'
+            : 'text-muted-foreground'
+      "
+    >
       {{
         !item.included
           ? 'Excluded from this batch.'

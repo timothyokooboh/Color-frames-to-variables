@@ -10,18 +10,18 @@ const backgroundColor = computed(() => colorToCss(props.swatch.color))
 </script>
 
 <template>
-  <li class="flex gap-3 rounded-lg border border-border p-3">
+  <li class="flex gap-3 rounded-lg border border-border bg-card p-3">
     <div
       aria-hidden="true"
-      class="swatch-grid h-12 w-12 shrink-0 overflow-hidden rounded-md border border-input"
+      class="swatch-grid h-10 w-10 shrink-0 overflow-hidden rounded-md border border-input"
     >
       <div class="h-full w-full" :style="{ backgroundColor }" />
     </div>
     <div class="min-w-0 flex-1 space-y-1">
-      <p class="whitespace-pre-wrap break-words text-sm font-medium">
+      <p class="whitespace-pre-wrap break-words text-xs font-medium">
         {{ swatch.name || '(Unnamed layer)' }}
       </p>
-      <p class="font-mono text-xs">{{ hex }}</p>
+      <p class="font-mono text-xs text-muted-foreground">{{ hex }}</p>
       <slot />
       <p v-if="swatch.hidden" class="text-xs text-muted-foreground">
         Layer is hidden; its visible fill is included.

@@ -8,47 +8,51 @@
   color-scheme: light;
   --background: var(--figma-color-bg, #ffffff);
   --foreground: var(--figma-color-text, #171717);
-  --card: var(--background);
+  --card: #f8f9ff;
   --card-foreground: var(--foreground);
   --popover: var(--background);
   --popover-foreground: var(--foreground);
-  --primary: #171717;
+  --primary: #4f46e5;
   --primary-foreground: #ffffff;
   --secondary: #f5f5f5;
   --secondary-foreground: #171717;
   --muted: #f5f5f5;
   --muted-foreground: #525252;
-  --accent: #f5f5f5;
+  --accent: #eef2ff;
   --accent-foreground: #171717;
   --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
   --border: var(--figma-color-border, #d4d4d4);
   --input: #737373;
   --ring: #2563eb;
-  --radius: 0.5rem;
+  --success: #166534;
+  --radius: 0.75rem;
 }
 
 .dark,
 .figma-dark {
   color-scheme: dark;
+  --card: #30313b;
+  --success: #86efac;
   --background: var(--figma-color-bg, #171717);
   --foreground: var(--figma-color-text, #fafafa);
-  --primary: #fafafa;
-  --primary-foreground: #171717;
+  --primary: #a5b4fc;
+  --primary-foreground: #1e1b4b;
   --secondary: #262626;
   --secondary-foreground: #fafafa;
   --muted: #262626;
-  --muted-foreground: #d4d4d4;
-  --accent: #262626;
+  --muted-foreground: #b4b6c7;
+  --accent: #30334d;
   --accent-foreground: #fafafa;
   --destructive: #fca5a5;
   --destructive-foreground: #171717;
   --border: var(--figma-color-border, #525252);
-  --input: #a3a3a3;
-  --ring: #93c5fd;
+  --input: #777b94;
+  --ring: #a5b4fc;
 }
 
 @theme inline {
+  --color-success: var(--success);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -76,6 +80,9 @@
 @layer base {
   body {
     margin: 0;
+  }
+  input[type='checkbox'] {
+    accent-color: var(--primary);
   }
   :focus-visible {
     outline: 2px solid var(--ring);

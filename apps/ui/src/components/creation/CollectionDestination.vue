@@ -20,10 +20,25 @@ const options = computed(() =>
 </script>
 
 <template>
-  <section class="space-y-2" aria-labelledby="destination-title">
+  <section
+    class="space-y-2 rounded-lg border border-border bg-card p-3"
+    aria-labelledby="destination-title"
+  >
     <h2 id="destination-title" class="text-sm font-semibold">Destination collection</h2>
+    <div class="flex items-center justify-between gap-2">
+      <span class="text-xs text-muted-foreground">Choose where your colors go</span>
+      <button
+        type="button"
+        :disabled="disabled || loading"
+        aria-label="Reload collection list"
+        class="rounded px-2 py-1 text-xs font-medium text-primary hover:bg-accent disabled:opacity-50"
+        @click="emit('reload')"
+      >
+        Reload list
+      </button>
+    </div>
     <label for="destination" class="block text-xs"
-      ><span>Collection</span>
+      ><span class="sr-only">Collection</span>
       <select
         id="destination"
         :value="selected"
@@ -57,13 +72,5 @@ const options = computed(() =>
       />
     </label>
     <p id="destination-error" class="text-xs text-destructive" role="status">{{ error }}</p>
-    <button
-      type="button"
-      :disabled="disabled || loading"
-      class="text-xs underline disabled:opacity-50"
-      @click="emit('reload')"
-    >
-      Refresh collections
-    </button>
   </section>
 </template>

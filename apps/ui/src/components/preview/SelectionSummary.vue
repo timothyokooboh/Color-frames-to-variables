@@ -5,7 +5,10 @@ defineEmits<{ refresh: [] }>()
 
 <template>
   <div class="flex flex-wrap items-center justify-between gap-3">
-    <p role="status" class="text-sm text-muted-foreground">
+    <p
+      role="status"
+      class="rounded-full bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground"
+    >
       {{
         loading
           ? 'Reading selection…'
@@ -17,7 +20,7 @@ defineEmits<{ refresh: [] }>()
     <button
       type="button"
       :aria-disabled="loading"
-      class="rounded-md border border-input px-3 py-2 text-sm font-medium hover:bg-accent"
+      class="rounded-md px-2 py-2 text-xs font-medium text-primary hover:bg-accent"
       @click="!loading && $emit('refresh')"
     >
       {{ hasError ? 'Try again' : 'Refresh selection' }}

@@ -8,7 +8,7 @@ const emit = defineEmits<{ create: [] }>()
     <button
       type="button"
       :aria-disabled="!enabled"
-      class="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-ring aria-disabled:opacity-50"
+      class="w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold shadow-sm enabled:active:brightness-95 text-primary-foreground focus-visible:outline-2 focus-visible:outline-ring aria-disabled:opacity-50"
       @click="enabled && emit('create')"
     >
       {{ submitting ? 'Creating variables…' : `Create ${count} variable${count === 1 ? '' : 's'}` }}
