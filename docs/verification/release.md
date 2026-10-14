@@ -19,7 +19,7 @@ corepack pnpm acceptance:build
 
 Create an empty disposable Figma Design file. Import `dist/acceptance/manifest.json` through desktop Plugins → Development → Import plugin from manifest. Run **Color Palette — Native acceptance (empty file only)**. It refuses nonempty current pages or files with local collections. It creates fixtures, runs command-boundary checks, and keeps the fixtures for inspection. It removes only its own temporary collection in the deleted-destination scenario. Never publish this harness or run it in a working design file. Production builds do not import it.
 
-Read the PASS/FAIL report in the harness panel or development console. Timing includes fixture setup, lookup, and writes; it is not a UI frame-rate benchmark. Use a new disposable file for each run. Starter team-file limits can require a personal Drafts file.
+Read the PASS/FAIL report in the harness panel or development console. Scenarios 5 and 15 depend on the Colors fixture created by scenario 1; diagnose the first failure before treating subsequent fixture failures as separate defects. Timing includes fixture setup, lookup, and writes; it is not a UI frame-rate benchmark. Use a new disposable file for each run. Starter team-file limits can require a personal Drafts file.
 
 ## Current desktop observations
 
@@ -60,6 +60,10 @@ Automated suites cover empty/unsupported selection, hidden layers/fills, paint t
 Manual desktop evidence includes visible keyboard focus on the 100-row list, result-heading focus, and prior recovery-focus checks. Accessibility-tree output exposes the collection label, include checkboxes, variable name inputs, and buttons. A full keyboard-only workflow, screen-reader announcements, light-theme rendering, high zoom, and delayed loading/error states still require an end-to-end pass.
 
 Calculated opaque token contrast (WCAG relative luminance): light normal text 17.93:1, muted/card 7.44:1, primary text 6.29:1, error/card 6.16:1; dark normal/card 12.36:1, muted/card 6.42:1, primary text 8.02:1, error/card 6.80:1, input border/card 3.10:1, focus ring/card 6.47:1. These sample token calculations do not certify WCAG conformance or all Figma theme overrides, opacity states, and rendered combinations.
+
+## Automated verification
+
+`corepack pnpm check` passed on 2026-10-14: 33 tests across eight files, all workspace typechecks, lint, formatting, production builds, and offline artifact checks. A frozen-lockfile offline install and `corepack pnpm acceptance:build` also passed. GitHub source visibility was confirmed PUBLIC. The acceptance harness and asset renderer are development-only and absent from the production dependency graph.
 
 ## Privacy, packaging, and account compatibility
 
