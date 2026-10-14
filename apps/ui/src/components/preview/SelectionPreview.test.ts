@@ -124,7 +124,6 @@ describe('selection preview', () => {
     expect(wrapper.text()).toContain('1 eligible · 1 skipped')
     expect(wrapper.text()).toContain('Brand/<100>')
     expect(wrapper.text()).toContain('#FF000066')
-    expect(wrapper.text()).toContain('RGBA (0–1): 1, 0, 0, 0.4')
     expect(wrapper.text()).toContain('Layer is hidden')
     expect(wrapper.text()).toContain('Layer opacity 50% is excluded')
     expect(wrapper.text()).toContain('Gradient swatch')

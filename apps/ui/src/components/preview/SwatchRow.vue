@@ -21,10 +21,6 @@ const backgroundColor = computed(() => colorToCss(props.swatch.color))
         {{ swatch.name || '(Unnamed layer)' }}
       </p>
       <p class="font-mono text-xs">{{ hex }}</p>
-      <p class="break-words font-mono text-xs text-muted-foreground">
-        RGBA (0–1): {{ swatch.color.r }}, {{ swatch.color.g }}, {{ swatch.color.b }},
-        {{ swatch.color.a }}
-      </p>
       <p v-if="swatch.hidden" class="text-xs text-muted-foreground">
         Layer is hidden; its visible fill is included.
       </p>
