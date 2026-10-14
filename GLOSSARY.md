@@ -1,4 +1,4 @@
-# Color Frames to Variables
+# Color Palette to Variables
 
 A palette conversion tool that turns selected color swatches into native Figma color variables while preserving designer-defined names and paint values.
 

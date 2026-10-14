@@ -4,7 +4,7 @@ import SelectionPreview from '@/components/preview/SelectionPreview.vue'
 </script>
 
 <template>
-  <PluginShell title="Color Frames to Variables">
+  <PluginShell title="Color Palette to Variables">
     <SelectionPreview />
   </PluginShell>
 </template>
