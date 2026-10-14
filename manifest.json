@@ -1,0 +1,11 @@
+{
+  "name": "Color Frames to Variables",
+  "api": "1.0.0",
+  "main": "dist/plugin/code.js",
+  "ui": "dist/ui/index.html",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}

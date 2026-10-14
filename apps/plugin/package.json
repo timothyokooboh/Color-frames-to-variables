@@ -1,0 +1,17 @@
+{
+  "name": "@color-frames/plugin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json"
+  },
+  "dependencies": {
+    "@color-frames/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "1.141.0"
+  }
+}
