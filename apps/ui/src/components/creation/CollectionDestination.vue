@@ -14,14 +14,14 @@ const emit = defineEmits<{ change: [value: string] }>()
         :disabled="disabled"
         :aria-invalid="Boolean(error)"
         aria-describedby="collection-help collection-error"
-        class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-ring"
+        class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-ring aria-invalid:border-destructive"
         @input="emit('change', ($event.target as HTMLInputElement).value)"
       />
     </label>
     <p id="collection-help" class="text-xs text-muted-foreground">
       Variables will use their full paths below in this collection’s default mode.
     </p>
-    <p id="collection-error" class="text-xs" role="status">
+    <p id="collection-error" class="text-xs" :class="{ 'text-destructive': error }" role="status">
       {{ error || (reviewing ? 'Checking destination and names…' : '') }}
     </p>
   </section>
