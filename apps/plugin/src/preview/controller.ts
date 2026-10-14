@@ -1,6 +1,9 @@
 import { isPreviewRequest, type PreviewResponse, type PreviewResult } from '@color-frames/contracts'
 
-export function createPreviewController(host: Pick<PluginAPI, 'currentPage' | 'mixed'>) {
+export function createPreviewController(host: {
+  currentPage: Pick<PageNode, 'selection'>
+  mixed: PluginAPI['mixed']
+}) {
   return (request: unknown): PreviewResponse | null => {
     if (!isPreviewRequest(request)) return null
     try {

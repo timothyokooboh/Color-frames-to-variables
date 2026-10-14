@@ -12,7 +12,7 @@ One product and one domain, organized as a pnpm workspace to separate runtime en
 
 Both apps may import contracts. Neither imports the other. Separate TypeScript environments keep Figma globals out of the UI and DOM globals out of the controller. Contracts are consumed as TypeScript source by Vite and need no publishing pipeline.
 
-The contracts package defines preview-selection, list-collections, review-collection, and create-collection commands with validated responses. The collection controller retains the reviewed source snapshot and destination, revalidates before writing, and locks processing/completed batches. Name validation and write/result accounting are separate modules; incomplete allocations are removed when possible and reported if cleanup fails. Both runtime boundaries validate incoming data. Request IDs correlate results and prevent older responses from replacing a refreshed preview. Add further commands alongside their actual behavior.
+The contracts package defines preview-selection, list-collections, review-collection, create-collection, and recover-collection commands with validated responses. The collection controller retains the reviewed source snapshot and destination, revalidates before writing, and locks processing/completed batches. Name validation and write/result accounting are separate modules; incomplete allocations are removed when possible and reported if cleanup fails. Both runtime boundaries validate incoming data. Request IDs correlate results and prevent older responses from replacing a refreshed preview. Add further commands alongside their actual behavior.
 
 ## Component map
 
@@ -51,3 +51,11 @@ Browser development provides UI hot reload. Figma development watches both produ
 Typecheck all workspaces, lint accessibility/composition rules, check formatting, run Vitest, then build and verify artifacts. Vitest has a DOM project for Vue tests and a Node project for controller/contracts tests. Controller-command tests cover extraction and failure responses; Vue interaction tests cover preview states, rendering, retry, and message validation.
 
 Use the controller command boundary with a simulated Figma environment for integration tests and focused user-facing Vue tests. Acceptance still requires actual Figma desktop and browser checks.
+
+## Overwrite and recovery
+
+Destination review captures the target identity, default mode, raw value and resolved alias value alongside the source snapshot. Individual overwrite tokens are valid only for that comparison. Creation revalidates the complete review before updating the default mode; other modes remain untouched.
+
+The controller retains a completed batch and incomplete allocation fingerprints for the plugin session. Recovery rereads only failed source IDs, pins the original collection and path strategy, and clears overwrite approvals. Successful counts accumulate while successful items remain outside retry submissions. Unchanged incomplete allocations can be completed in place; changed allocations become conflicts, and retained allocations remain visible as result warnings.
+
+OverwriteApproval presents the comparison and individual consent. useRecovery owns recovery requests and response correlation; RecoverySummary shows retained counts and an escape to a new batch. CreationResults exposes Retry failed and Back to preview, both of which open refreshed failed-item review before writing.

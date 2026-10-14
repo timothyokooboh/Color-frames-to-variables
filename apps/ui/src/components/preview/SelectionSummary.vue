@@ -19,6 +19,7 @@ defineEmits<{ refresh: [] }>()
     </p>
     <button
       type="button"
+      data-refresh-selection
       :aria-disabled="loading"
       class="rounded-md px-2 py-2 text-xs font-medium text-primary hover:bg-accent"
       @click="!loading && $emit('refresh')"

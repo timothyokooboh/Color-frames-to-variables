@@ -1,3 +1,4 @@
+import type { PaintColor, PreviewResult } from './index'
 export type Destination = { kind: 'new'; name: string } | { kind: 'existing'; id: string }
 export interface CollectionOption {
   id: string
@@ -16,8 +17,20 @@ export interface ProposedItem {
   id: string
   relativeName: string
   included: boolean
+  overwriteToken?: string | undefined
 }
 export interface ReviewedItem extends ProposedItem {
+  conflict?:
+    | {
+        token: string
+        variableId: string
+        canOverwrite: boolean
+        existingColor: PaintColor | null
+        proposedColor: PaintColor
+      }
+    | undefined
+  operation?: 'create' | 'update' | 'recover' | undefined
+  recoveryVariableId?: string | undefined
   fullPath: string
   status: 'ready' | 'excluded' | 'invalid' | 'duplicate' | 'conflict'
   message: string
@@ -54,9 +67,11 @@ export interface CreationResult {
   collectionEmpty: boolean
   collectionId: string
   created: number
+  updated: number
   failed: number
   excluded: number
   unsupported: number
+  warnings?: { id: string; name: string; message: string }[]
   errors: { id: string; name: string; message: string }[]
 }
 export interface CreationError {
@@ -65,6 +80,23 @@ export interface CreationError {
   message: string
 }
 export type CollectionRequest =
-  ReviewCollectionRequest | CreateCollectionRequest | ListCollectionsRequest
+  | ReviewCollectionRequest
+  | CreateCollectionRequest
+  | ListCollectionsRequest
+  | RecoverCollectionRequest
 export type CollectionResponse =
-  CollectionReview | CreationResult | CreationError | CollectionOptions
+  CollectionReview | CreationResult | CreationError | CollectionOptions | RecoveryPreview
+
+export interface RecoverCollectionRequest {
+  type: 'recover-collection'
+  requestId: number
+  resultRequestId: number
+}
+export interface RecoveryPreview {
+  type: 'recovery-preview'
+  requestId: number
+  preview: PreviewResult
+  items: ProposedItem[]
+  destination: Destination
+  previous: CreationResult
+}

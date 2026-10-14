@@ -83,7 +83,7 @@ it('blocks COLOR and incompatible conflicts, resolves by skipping or renaming, a
   expect(await env.handle(command)).toMatchObject({
     canCreate: false,
     rows: [
-      { status: 'conflict', message: expect.stringContaining('COLOR') },
+      { status: 'conflict', conflict: { canOverwrite: true } },
       { status: 'duplicate' },
       { status: 'duplicate' },
     ],

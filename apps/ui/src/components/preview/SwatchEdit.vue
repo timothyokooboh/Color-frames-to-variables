@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useId } from 'vue'
+import OverwriteApproval from './OverwriteApproval.vue'
 import type { ProposedItem, ReviewedItem } from '@color-frames/contracts'
 defineProps<{ item: ProposedItem; reviewed?: ReviewedItem | undefined; disabled: boolean }>()
 const emit = defineEmits<{
-  edit: [change: Partial<Pick<ProposedItem, 'relativeName' | 'included'>>]
+  edit: [change: Partial<Pick<ProposedItem, 'relativeName' | 'included' | 'overwriteToken'>>]
 }>()
 const id = useId()
 </script>
@@ -32,6 +33,13 @@ const id = useId()
         @input="emit('edit', { relativeName: ($event.target as HTMLInputElement).value })"
       />
     </label>
+    <OverwriteApproval
+      v-if="reviewed?.conflict"
+      :conflict="reviewed.conflict"
+      :approved="item.overwriteToken === reviewed.conflict.token"
+      :disabled="disabled || !item.included"
+      @approve="emit('edit', { overwriteToken: $event })"
+    />
     <p v-if="reviewed" class="whitespace-pre-wrap break-words text-xs">
       Full variable path: {{ reviewed.fullPath }}
     </p>
@@ -49,7 +57,14 @@ const id = useId()
       {{
         !item.included
           ? 'Excluded from this batch.'
-          : reviewed?.message || (reviewed ? 'Ready to create' : 'Checking name and path…')
+          : reviewed?.message ||
+            (reviewed
+              ? reviewed.operation === 'update'
+                ? 'Approved to update'
+                : reviewed.operation === 'recover'
+                  ? 'Ready to finish incomplete variable'
+                  : 'Ready to create'
+              : 'Checking name and path…')
       }}
     </p>
   </div>

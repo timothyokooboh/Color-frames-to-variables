@@ -29,16 +29,22 @@ export function useCollectionCreation(
   const review = shallowRef<CollectionReview | null>(null)
   const result = shallowRef<CreationResult | null>(null)
   const submitting = shallowRef(false)
+  const reviewing = shallowRef(false)
   const error = shallowRef('')
   let requestId = 0
   let timer: ReturnType<typeof setTimeout> | undefined
   const canCreate = computed(
-    () => !loading.value && !submitting.value && !result.value && review.value?.canCreate === true,
+    () =>
+      !reviewing.value &&
+      !loading.value &&
+      !submitting.value &&
+      !result.value &&
+      review.value?.canCreate === true,
   )
 
   function requestReview() {
     clearTimeout(timer)
-    review.value = null
+    reviewing.value = true
     error.value = ''
     requestId = nextRequestId()
     if (!preview.value || !destination.value || loading.value || submitting.value || result.value)
@@ -49,11 +55,12 @@ export function useCollectionCreation(
           type: 'review-collection',
           requestId,
           previewRequestId: preview.value.requestId,
-          destination: destination.value,
-          items: items.value.map(({ id, relativeName, included }) => ({
+          destination: { ...destination.value },
+          items: items.value.map(({ id, relativeName, included, overwriteToken }) => ({
             id,
             relativeName,
             included,
+            overwriteToken,
           })),
         } satisfies ReviewCollectionRequest,
       },
@@ -87,11 +94,13 @@ export function useCollectionCreation(
     if (
       !isCollectionResponse(message) ||
       message.type === 'collection-options' ||
+      message.type === 'recovery-preview' ||
       message.requestId !== requestId
     )
       return
     clearTimeout(timer)
     error.value = ''
+    reviewing.value = false
     if (message.type === 'collection-review') review.value = message
     else {
       submitting.value = false
@@ -117,6 +126,7 @@ export function useCollectionCreation(
     review: readonly(review),
     result: readonly(result),
     submitting: readonly(submitting),
+    reviewing: readonly(reviewing),
     error: readonly(error),
     canCreate,
     create,

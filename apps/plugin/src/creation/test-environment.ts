@@ -19,9 +19,13 @@ export function environment(count = 45) {
     type: string
   }[] = []
   const notifications: string[] = []
+  let variableId = 0
   const host = {
     currentPage: { selection },
     mixed: Symbol('mixed'),
+    async getNodeByIdAsync(id: string) {
+      return selection.find((node) => node.id === id) ?? null
+    },
     variables: {
       async getLocalVariableCollectionsAsync() {
         return collections
@@ -31,6 +35,9 @@ export function environment(count = 45) {
           ...variable,
           id: variable.id ?? String(i),
           resolvedType: variable.type,
+          setValueForMode(mode: string, value: unknown) {
+            variable.valuesByMode = { ...variable.valuesByMode, [mode]: value }
+          },
           valuesByMode:
             variable.valuesByMode ?? (variable.mode ? { [variable.mode]: variable.value } : {}),
         }))
@@ -46,12 +53,21 @@ export function environment(count = 45) {
       },
       createVariable(name: string, _collection: unknown, type: string) {
         const variable = {
+          id: `allocated-${++variableId}`,
           name,
           type,
           variableCollectionId: (_collection as { id: string }).id,
         } as (typeof variables)[number]
         variables.push(variable)
         return {
+          id: variable.id!,
+          name,
+          resolvedType: type,
+          get valuesByMode() {
+            return (
+              variable.valuesByMode ?? (variable.mode ? { [variable.mode]: variable.value } : {})
+            )
+          },
           setValueForMode(mode: string, value: unknown) {
             variable.mode = mode
             variable.value = value

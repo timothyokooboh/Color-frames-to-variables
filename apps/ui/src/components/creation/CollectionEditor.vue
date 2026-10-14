@@ -18,13 +18,18 @@ const props = defineProps<{
   customName: string
   destinationError: string
   loading: boolean
+  reviewing: boolean
+  recoveryName?: string | undefined
   disabled: boolean
 }>()
 const emit = defineEmits<{
   select: [value: string]
   rename: [value: string]
   reload: []
-  edit: [id: string, change: Partial<Pick<ProposedItem, 'relativeName' | 'included'>>]
+  edit: [
+    id: string,
+    change: Partial<Pick<ProposedItem, 'relativeName' | 'included' | 'overwriteToken'>>,
+  ]
   skipConflicts: []
 }>()
 const conflicts = computed(() =>
@@ -33,7 +38,11 @@ const conflicts = computed(() =>
 </script>
 
 <template>
+  <p v-if="recoveryName" class="text-xs">
+    Retry destination: {{ review?.collectionName ?? recoveryName }}
+  </p>
   <CollectionDestination
+    v-else
     :collections="collections"
     :selected="selected"
     :custom-name="customName"
@@ -44,14 +53,14 @@ const conflicts = computed(() =>
     @rename="emit('rename', $event)"
     @reload="emit('reload')"
   />
-  <p v-if="review" class="whitespace-pre-wrap break-words text-xs">
+  <p v-if="review && !recoveryName" class="whitespace-pre-wrap break-words text-xs">
     Destination: {{ review.collectionName }}
   </p>
   <button
     type="button"
-    :aria-disabled="disabled || !conflicts"
+    :aria-disabled="disabled || reviewing || !conflicts"
     class="rounded-md border border-input px-3 py-2 text-xs focus-visible:outline-2 focus-visible:outline-ring aria-disabled:opacity-50"
-    @click="!disabled && conflicts && emit('skipConflicts')"
+    @click="!disabled && !reviewing && conflicts && emit('skipConflicts')"
   >
     Skip all conflicts
   </button>
