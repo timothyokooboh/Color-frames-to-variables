@@ -17,7 +17,7 @@ The complete proposed variable name within its destination collection, including
 The new or existing local Figma variable collection chosen to receive the color variables.
 
 **Colors group**:
-The slash-based hierarchy beginning with `Colors/` inside an existing destination collection.
+The slash-based hierarchy beginning with `Colors/` inside a destination collection.
 _Avoid_: Nested collection
 
 **Existing-variable conflict**:

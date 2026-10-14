@@ -2,14 +2,14 @@
 
 A Figma Design plugin for converting selected color swatches into native color variables while preserving designer-defined names and paint values.
 
-**Current stage:** preview, refine, and create variables in new or existing collections. Edit proposed names without renaming source layers, exclude items, and resolve conflicts before creating. The collection picker defaults to Colors; other existing collections receive variables under a Colors group. Results separate created, updated, failed, intentionally excluded, and unsupported items. Existing color variables require individual overwrite approval with a color comparison. Failed items can be refreshed, corrected, and retried without repeating successful writes. See [the MVP specification](https://github.com/timothyokooboh/Color-frames-to-variables/issues/1).
+**Current stage:** preview, refine, and create variables in new or existing collections. Edit proposed names without renaming source layers, exclude items, and resolve conflicts before creating. The collection picker defaults to Colors; all other collections, new or existing, receive variables under a Colors group. Results separate created, updated, failed, intentionally excluded, and unsupported items. Existing color variables require individual overwrite approval with a color comparison. Failed items can be refreshed, corrected, and retried without repeating successful writes. See [the MVP specification](https://github.com/timothyokooboh/Color-frames-to-variables/issues/1).
 
 ## Setup
 
 Use Node.js 24 (recorded in `.node-version`) and pnpm 10.30.3, pinned in `package.json`.
 
 ```sh
-corepack pnpm install
+corepack pnpm install --frozen-lockfile
 corepack pnpm dev
 ```
 
@@ -60,3 +60,15 @@ pnpm --filter @color-frames/ui exec shadcn-vue add button
 ```
 
 Review generated components against project accessibility and composition conventions. A component library alone does not establish WCAG compliance.
+
+## Release status and privacy
+
+Submitted to Figma Community for review; approval is pending. See the [acceptance record and remaining gates](docs/verification/release.md) and [Community listing package](docs/release/community.md). Local plugin development requires Figma desktop; `pnpm dev` is a standalone UI preview, not a browser-host Figma test.
+
+The plugin has no backend, analytics, account system, external runtime requests, or external design-data storage. It reads the selected layers and local variables, writes only approved variables, and retains retry state in memory for the current plugin session. Closing the plugin loses that retry context; inspect any reported incomplete allocations before starting again. Figma itself retains and syncs the document under its own terms.
+
+Only explicitly selected frames and rectangles with one visible solid fill qualify. The plugin writes the default mode, preserves paint opacity, and does not bind variables back to source fills. Unresolvable aliases require renaming or exclusion.
+
+## Contributing and license
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Project code is [MIT licensed](LICENSE); dependency and third-party guidance licenses remain applicable.

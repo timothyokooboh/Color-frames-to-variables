@@ -1,12 +1,12 @@
 # Product decisions
 
-These decisions clarify the supplied Color Palette to Variables PRD. Implementation remains pending completion of the design discussion.
+These decisions clarify the supplied Color Palette to Variables PRD. Implementation and release verification are tracked in GitHub Issues.
 
 ## Naming and destination
 
-- For existing collections other than exactly `Colors`, preserve an exact leading `Colors/` prefix; otherwise prepend `Colors/`. Matching is case-sensitive. An existing `Colors` collection receives exact relative names directly.
+- For new or existing collections other than exactly `Colors`, preserve an exact leading `Colors/` prefix; otherwise prepend `Colors/`. Matching is case-sensitive. A `Colors` collection receives exact relative names directly.
 - Rename edits affect only the proposed relative variable name. The destination prefix is handled separately, and source layers remain unchanged.
-- Both new collections and an existing `Colors` collection receive `Brand/100` directly. Other existing collections, such as `Primitives` and `Design Tokens`, receive `Colors/Brand/100`. Preview the full path explicitly; do not alter the source relative name.
+- New and existing collections named exactly `Colors` receive `Brand/100` directly. All other collections, such as `Primitives` and `Design Tokens`, receive `Colors/Brand/100`. Preview the full path explicitly; do not alter the source relative name.
 - Empty or whitespace-only names require renaming or skipping. Preserve spaces in otherwise valid names; never silently trim or correct them.
 
 ## Selection eligibility
@@ -26,10 +26,12 @@ These decisions clarify the supplied Color Palette to Variables PRD. Implementat
 - Allow any eligible item to be excluded using a per-item checkbox, including nonconflicting items.
 - Disable creation when there are no valid, approved writes. Do not create a collection for an empty batch.
 - Keep the plugin open after success with its results and a Start new batch action. A completed batch cannot be resubmitted.
-- If a newly created collection receives no successful variable writes, retain it and report that it is empty. Retry against that same collection while preserving the original new-collection strategy and unprefixed paths.
+- If a newly created collection receives no successful variable writes, retain it and report that it is empty. Retry against that same collection using the same collection-name-based prefix rule as the original attempt.
 - Offer Back to preview from results, alongside Retry failed when applicable and Start new batch. Keep successful items locked against resubmission while allowing failed items to be corrected.
 
 ## Interface
+
+- Show HEX only in the preview, including alpha when applicable. Preserve original RGBA values internally for Figma writes. This supersedes the original PRD/spec request to display raw RGBA floats.
 
 - Use one destination dropdown listing existing local collections by name and ID. Label the existing default `Colors (Existing)`, and select it by default, or offer `Colors (Create new)` when it is absent. Show the create-default option only while that exact name is absent.
 - Preserve custom new-collection naming through `Create new collection…`, which reveals the name input. Apply the destination prefix policy above. This combined picker is implemented with the existing-collection ticket (#5).

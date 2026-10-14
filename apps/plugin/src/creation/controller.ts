@@ -110,7 +110,7 @@ export function createCollectionController(host: PluginAPI) {
           return error(
             'Recovery must use the original collection. Start a new batch to choose another destination.',
           )
-        const result = reviewDestination(source, request, target, recovering && batch?.unprefixed)
+        const result = reviewDestination(source, request, target)
         reviewArtifacts(result, target.variables, artifacts)
         if (recovering)
           for (const row of result.rows) {
@@ -160,12 +160,7 @@ export function createCollectionController(host: PluginAPI) {
         : preview({ type: 'preview-selection', requestId: source.requestId })
       if (JSON.stringify(current) !== JSON.stringify(expected))
         return error('Sources or selection changed. Refresh the selection and review again.')
-      const checked = reviewDestination(
-        source,
-        destination.request,
-        target,
-        recovering && batch?.unprefixed,
-      )
+      const checked = reviewDestination(source, destination.request, target)
       reviewArtifacts(checked, target.variables, artifacts)
       finalizeReview(checked)
       const targetKey = destinationFingerprint(target.collection)
@@ -192,7 +187,6 @@ export function createCollectionController(host: PluginAPI) {
         result,
         source,
         request: destination.request,
-        unprefixed: recovering ? batch!.unprefixed : destination.request.destination.kind === 'new',
       }
       completed = true
       try {

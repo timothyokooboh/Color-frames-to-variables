@@ -8,19 +8,22 @@
     "node": ">=22.12.0"
   },
   "scripts": {
-    "dev": "pnpm --filter @color-frames/ui dev",
-    "build": "pnpm --filter @color-frames/ui build && pnpm --filter @color-frames/plugin build && node scripts/verify-build.mjs",
-    "dev:plugin": "pnpm build && pnpm --parallel --filter @color-frames/ui --filter @color-frames/plugin watch",
-    "typecheck": "pnpm -r typecheck",
+    "dev": "corepack pnpm --filter @color-frames/ui dev",
+    "build": "corepack pnpm --filter @color-frames/ui build && corepack pnpm --filter @color-frames/plugin build && node scripts/verify-build.mjs",
+    "dev:plugin": "corepack pnpm build && corepack pnpm --parallel --filter @color-frames/ui --filter @color-frames/plugin watch",
+    "typecheck": "corepack pnpm -r typecheck",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build"
+    "check": "corepack pnpm typecheck && corepack pnpm lint && corepack pnpm format:check && corepack pnpm test && corepack pnpm build",
+    "acceptance:build": "node scripts/build-acceptance.mjs",
+    "release:assets": "node scripts/build-release-assets.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@resvg/resvg-js": "2.6.2",
     "@types/node": "24.19.2",
     "@vitejs/plugin-vue": "6.0.10",
     "@vue/test-utils": "2.5.1",
@@ -37,5 +40,6 @@
     "vitest": "5.0.4",
     "vue-eslint-parser": "10.4.1",
     "vue-tsc": "3.3.13"
-  }
+  },
+  "license": "MIT"
 }

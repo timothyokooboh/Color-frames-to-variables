@@ -1,5 +1,6 @@
 {
   "name": "Color Palette to Variables",
+  "id": "1692281770771805809",
   "api": "1.0.0",
   "main": "dist/plugin/code.js",
   "ui": "dist/ui/index.html",

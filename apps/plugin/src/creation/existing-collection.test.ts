@@ -154,3 +154,34 @@ it('stops writes when the destination is deleted, renamed, changes default mode,
     ).toMatchObject({ type: 'creation-error' })
   }
 })
+
+it('uses the same name-based paths for new collections without duplicating Colors prefixes', async () => {
+  for (const name of ['Colors', 'testing', 'colors']) {
+    const env = environment(2)
+    env.selection[0]!.name = 'Brand/100'
+    env.selection[1]!.name = 'Colors/Brand/200'
+    await env.handle({ type: 'preview-selection', requestId: 1 })
+    expect(
+      await env.handle({
+        type: 'review-collection',
+        requestId: 2,
+        previewRequestId: 1,
+        destination: { kind: 'new', name },
+      }),
+    ).toMatchObject({
+      canCreate: true,
+      rows: [
+        { fullPath: name === 'Colors' ? 'Brand/100' : 'Colors/Brand/100' },
+        { fullPath: 'Colors/Brand/200' },
+      ],
+    })
+    expect(
+      await env.handle({ type: 'create-collection', requestId: 3, reviewRequestId: 2 }),
+    ).toMatchObject({ created: 2 })
+    expect(env.variables.map((v) => v.name)).toEqual([
+      name === 'Colors' ? 'Brand/100' : 'Colors/Brand/100',
+      'Colors/Brand/200',
+    ])
+    expect(env.selection.map((n) => n.name)).toEqual(['Brand/100', 'Colors/Brand/200'])
+  }
+})
