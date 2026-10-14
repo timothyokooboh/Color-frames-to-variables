@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { SourceSwatch, NameIssue } from '@color-frames/contracts'
 import SwatchRow from './SwatchRow.vue'
-defineProps<{
+const props = defineProps<{
   swatches: readonly SourceSwatch[]
   issues?: readonly NameIssue[]
   showPath?: boolean
 }>()
+const issuesById = computed(() => new Map(props.issues?.map(({ id, message }) => [id, message])))
 </script>
 
 <template>
@@ -17,7 +19,7 @@ defineProps<{
         :key="swatch.id"
         :swatch="swatch"
         :show-path="showPath"
-        :issue="issues?.find((issue) => issue.id === swatch.id)?.message ?? ''"
+        :issue="issuesById.get(swatch.id) ?? ''"
       />
     </ul>
   </section>
