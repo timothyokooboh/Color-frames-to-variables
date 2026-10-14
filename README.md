@@ -9,7 +9,7 @@ A Figma Design plugin for converting selected color swatches into native color v
 Use Node.js 24 (recorded in `.node-version`) and pnpm 10.30.3, pinned in `package.json`.
 
 ```sh
-corepack pnpm install
+corepack pnpm install --frozen-lockfile
 corepack pnpm dev
 ```
 
@@ -60,3 +60,15 @@ pnpm --filter @color-frames/ui exec shadcn-vue add button
 ```
 
 Review generated components against project accessibility and composition conventions. A component library alone does not establish WCAG compliance.
+
+## Release status and privacy
+
+Release preparation is in progress; Community submission has not occurred. See the [acceptance record and remaining gates](docs/verification/release.md) and [Community listing package](docs/release/community.md). Local plugin development requires Figma desktop; `pnpm dev` is a standalone UI preview, not a browser-host Figma test.
+
+The plugin has no backend, analytics, account system, external runtime requests, or external design-data storage. It reads the selected layers and local variables, writes only approved variables, and retains retry state in memory for the current plugin session. Closing the plugin loses that retry context; inspect any reported incomplete allocations before starting again. Figma itself retains and syncs the document under its own terms.
+
+Only explicitly selected frames and rectangles with one visible solid fill qualify. The plugin writes the default mode, preserves paint opacity, and does not bind variables back to source fills. Unresolvable aliases require renaming or exclusion.
+
+## Contributing and license
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Project code is [MIT licensed](LICENSE); dependency and third-party guidance licenses remain applicable.

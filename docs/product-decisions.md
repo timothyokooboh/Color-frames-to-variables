@@ -1,6 +1,6 @@
 # Product decisions
 
-These decisions clarify the supplied Color Palette to Variables PRD. Implementation remains pending completion of the design discussion.
+These decisions clarify the supplied Color Palette to Variables PRD. Implementation and release verification are tracked in GitHub Issues.
 
 ## Naming and destination
 
@@ -30,6 +30,8 @@ These decisions clarify the supplied Color Palette to Variables PRD. Implementat
 - Offer Back to preview from results, alongside Retry failed when applicable and Start new batch. Keep successful items locked against resubmission while allowing failed items to be corrected.
 
 ## Interface
+
+- Show HEX only in the preview, including alpha when applicable. Preserve original RGBA values internally for Figma writes. This supersedes the original PRD/spec request to display raw RGBA floats.
 
 - Use one destination dropdown listing existing local collections by name and ID. Label the existing default `Colors (Existing)`, and select it by default, or offer `Colors (Create new)` when it is absent. Show the create-default option only while that exact name is absent.
 - Preserve custom new-collection naming through `Create new collection…`, which reveals the name input. Apply the destination prefix policy above. This combined picker is implemented with the existing-collection ticket (#5).

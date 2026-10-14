@@ -17,10 +17,13 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build"
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm test && pnpm build",
+    "acceptance:build": "node scripts/build-acceptance.mjs",
+    "release:assets": "node scripts/build-release-assets.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@resvg/resvg-js": "2.6.2",
     "@types/node": "24.19.2",
     "@vitejs/plugin-vue": "6.0.10",
     "@vue/test-utils": "2.5.1",
@@ -37,5 +40,6 @@
     "vitest": "5.0.4",
     "vue-eslint-parser": "10.4.1",
     "vue-tsc": "3.3.13"
-  }
+  },
+  "license": "MIT"
 }
