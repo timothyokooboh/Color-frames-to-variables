@@ -12,17 +12,21 @@ One product and one domain, organized as a pnpm workspace to separate runtime en
 
 Both apps may import contracts. Neither imports the other. Separate TypeScript environments keep Figma globals out of the UI and DOM globals out of the controller. Contracts are consumed as TypeScript source by Vite and need no publishing pipeline.
 
-The contracts package intentionally has no speculative feature protocol. Add each command alongside its actual controller/UI behavior. Validate incoming messages at runtime; TypeScript alone does not validate cross-frame data.
+The contracts package defines the preview-selection command and preview-result/error responses. Both runtime boundaries validate incoming data. Request IDs correlate results and prevent older responses from replacing a refreshed preview. Add further commands alongside their actual behavior.
 
 ## Component map
 
-| Component     | Responsibility                                        | Contract                                           |
-| ------------- | ----------------------------------------------------- | -------------------------------------------------- |
-| `App`         | Compose the shell and current content                 | No props or events                                 |
-| `PluginShell` | Header, scrollable main region, optional fixed footer | `title: string`; default and optional footer slots |
-| `SetupNotice` | Explain the development-only state                    | No props or events                                 |
+| Component              | Responsibility                                           | Contract                              |
+| ---------------------- | -------------------------------------------------------- | ------------------------------------- |
+| App                    | Compose the shell and preview                            | No props or events                    |
+| PluginShell            | Header, scrollable main region, optional footer          | title; default/footer slots           |
+| SelectionPreview       | Compose request states and preview sections              | Uses useSelectionPreview              |
+| SelectionSummary       | Show counts and request refresh                          | eligible/skipped props; refresh event |
+| PreviewEmptyState      | Explain empty or ineligible selections                   | hasSkipped prop                       |
+| SwatchList / SwatchRow | Render eligible paints and display-only color formatting | swatches / swatch props               |
+| SkippedLayers          | Explain each excluded source layer                       | layers prop                           |
 
-The setup screen is scaffolding, not the final product design. Feature tickets replace it with containers composed from small presentational sections and rows.
+The useSelectionPreview composable owns messaging, loading/error state, response correlation, and listener/timer cleanup. Preview state is local to this feature, so it does not need a Pinia store. Pure display formatting never changes the original channel values carried in contracts.
 
 Group reusable primitives under `components/ui`, layout under `components/layout`, and feature UI by feature. Add focused composables and Pinia setup stores when behavior needs them; avoid empty stores and abstractions with no consumer. Components own presentation, composables own stateful orchestration, and plain functions own pure transformations.
 
@@ -42,6 +46,6 @@ Browser development provides UI hot reload. Figma development watches both produ
 
 ## Verification
 
-Typecheck all workspaces, lint accessibility/composition rules, check formatting, run Vitest, then build and verify artifacts. Vitest has a DOM project for Vue tests and a Node project for controller/contracts tests. Product tests arrive with product behavior.
+Typecheck all workspaces, lint accessibility/composition rules, check formatting, run Vitest, then build and verify artifacts. Vitest has a DOM project for Vue tests and a Node project for controller/contracts tests. Controller-command tests cover extraction and failure responses; Vue interaction tests cover preview states, rendering, retry, and message validation.
 
 Use the controller command boundary with a simulated Figma environment for integration tests and focused user-facing Vue tests. Acceptance still requires actual Figma desktop and browser checks.
