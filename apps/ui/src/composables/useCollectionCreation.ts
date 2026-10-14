@@ -15,13 +15,17 @@ import {
   type CreateCollectionRequest,
   type CreationResult,
   type PreviewResult,
+  type ProposedItem,
+  type Destination,
 } from '@color-frames/contracts'
+import { nextRequestId, readPluginMessage } from '@/lib/plugin-message'
 
 export function useCollectionCreation(
   preview: Readonly<Ref<DeepReadonly<PreviewResult> | null>>,
   loading: Readonly<Ref<boolean>>,
+  items: Readonly<Ref<readonly ProposedItem[]>>,
+  destination: Readonly<Ref<Destination | null>>,
 ) {
-  const collectionName = shallowRef('Colors')
   const review = shallowRef<CollectionReview | null>(null)
   const result = shallowRef<CreationResult | null>(null)
   const submitting = shallowRef(false)
@@ -36,15 +40,21 @@ export function useCollectionCreation(
     clearTimeout(timer)
     review.value = null
     error.value = ''
-    requestId++
-    if (!preview.value || loading.value || submitting.value || result.value) return
+    requestId = nextRequestId()
+    if (!preview.value || !destination.value || loading.value || submitting.value || result.value)
+      return
     window.parent.postMessage(
       {
         pluginMessage: {
           type: 'review-collection',
           requestId,
           previewRequestId: preview.value.requestId,
-          collectionName: collectionName.value,
+          destination: destination.value,
+          items: items.value.map(({ id, relativeName, included }) => ({
+            id,
+            relativeName,
+            included,
+          })),
         } satisfies ReviewCollectionRequest,
       },
       '*',
@@ -62,7 +72,7 @@ export function useCollectionCreation(
       {
         pluginMessage: {
           type: 'create-collection',
-          requestId: ++requestId,
+          requestId: (requestId = nextRequestId()),
           reviewRequestId: review.value.requestId,
         } satisfies CreateCollectionRequest,
       },
@@ -73,10 +83,13 @@ export function useCollectionCreation(
     }, 10000)
   }
   function receive(event: MessageEvent<unknown>) {
-    if (event.origin !== 'https://www.figma.com' && event.origin !== 'https://figma.com') return
-    if (typeof event.data !== 'object' || event.data === null) return
-    const message: unknown = Reflect.get(event.data, 'pluginMessage')
-    if (!isCollectionResponse(message) || message.requestId !== requestId) return
+    const message = readPluginMessage(event)
+    if (
+      !isCollectionResponse(message) ||
+      message.type === 'collection-options' ||
+      message.requestId !== requestId
+    )
+      return
     clearTimeout(timer)
     error.value = ''
     if (message.type === 'collection-review') review.value = message
@@ -87,31 +100,25 @@ export function useCollectionCreation(
       else error.value = message.message
     }
   }
-  function setCollectionName(value: string) {
-    if (!submitting.value && !result.value) collectionName.value = value
-  }
   function reset() {
     if (!submitting.value) {
       result.value = null
       review.value = null
       error.value = ''
-      collectionName.value = 'Colors'
     }
   }
-  watch([preview, loading, collectionName], requestReview)
+  watch([preview, loading, items, destination], requestReview)
   onMounted(() => window.addEventListener('message', receive))
   onUnmounted(() => {
     clearTimeout(timer)
     window.removeEventListener('message', receive)
   })
   return {
-    collectionName: readonly(collectionName),
     review: readonly(review),
     result: readonly(result),
     submitting: readonly(submitting),
     error: readonly(error),
     canCreate,
-    setCollectionName,
     create,
     reset,
   }

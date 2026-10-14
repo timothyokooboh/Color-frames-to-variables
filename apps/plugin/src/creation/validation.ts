@@ -1,24 +1,50 @@
-import type { CollectionReview, PreviewResult } from '@color-frames/contracts'
+import type {
+  CollectionReview,
+  PreviewResult,
+  ProposedItem,
+  ReviewedItem,
+} from '@color-frames/contracts'
 
 export function reviewNames(
   snapshot: PreviewResult,
   collectionName: string,
   existingNames: string[],
   requestId: number,
+  items?: ProposedItem[],
+  prefix = false,
 ): CollectionReview {
+  const proposals =
+    items ?? snapshot.swatches.map(({ id, name }) => ({ id, relativeName: name, included: true }))
+  const ids = new Set(proposals.map(({ id }) => id))
+  if (
+    ids.size !== proposals.length ||
+    proposals.length !== snapshot.swatches.length ||
+    snapshot.swatches.some(({ id }) => !ids.has(id))
+  )
+    throw new Error('The proposed items do not match the preview. Refresh the selection.')
+  const path = (name: string) => (prefix && !name.startsWith('Colors/') ? `Colors/${name}` : name)
   const counts = new Map<string, number>()
-  for (const swatch of snapshot.swatches)
-    counts.set(swatch.name, (counts.get(swatch.name) ?? 0) + 1)
-  const issues = snapshot.swatches.flatMap(({ id, name }) => {
-    const message = !name.trim()
-      ? 'Name cannot be blank.'
-      : name.split('/').some((segment) => !segment.trim())
-        ? 'Name contains an empty slash segment.'
-        : (counts.get(name) ?? 0) > 1
-          ? 'Duplicate variable path. Rename the source layers and refresh.'
+  for (const item of proposals)
+    if (item.included)
+      counts.set(path(item.relativeName), (counts.get(path(item.relativeName)) ?? 0) + 1)
+  const rows: ReviewedItem[] = proposals.map((item) => {
+    const name = item.relativeName
+    const status = !item.included
+      ? 'excluded'
+      : !name.trim() || name.split('/').some((segment) => !segment.trim())
+        ? 'invalid'
+        : (counts.get(path(name)) ?? 0) > 1
+          ? 'duplicate'
+          : 'ready'
+    const message =
+      status === 'invalid'
+        ? 'Enter a name with no empty slash segments.'
+        : status === 'duplicate'
+          ? 'Duplicate variable path. Rename or exclude the affected items.'
           : ''
-    return message ? [{ id, message }] : []
+    return { ...item, fullPath: path(name), status, message }
   })
+  const issues = rows.filter(({ message }) => message).map(({ id, message }) => ({ id, message }))
   const collectionError = !collectionName.trim()
     ? 'Enter a collection name.'
     : existingNames.includes(collectionName)
@@ -29,7 +55,8 @@ export function reviewNames(
     requestId,
     collectionName,
     issues,
+    rows,
     collectionError,
-    canCreate: snapshot.swatches.length > 0 && !issues.length && !collectionError,
+    canCreate: rows.some((item) => item.included) && !issues.length && !collectionError,
   }
 }

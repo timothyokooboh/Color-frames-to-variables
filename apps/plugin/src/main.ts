@@ -6,3 +6,5 @@ figma.ui.onmessage = async (message: unknown) => {
   if (response) figma.ui.postMessage(response)
 }
 figma.showUI(__html__, { width: 440, height: 560, themeColors: true })
+
+figma.on('selectionchange', () => figma.ui.postMessage({ type: 'selection-changed' }))

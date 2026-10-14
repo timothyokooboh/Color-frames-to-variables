@@ -3,7 +3,8 @@ import { computed } from 'vue'
 import type { SourceSwatch } from '@color-frames/contracts'
 import { colorToCss, colorToHex } from '@/lib/color-display'
 
-const props = defineProps<{ swatch: SourceSwatch; showPath?: boolean; issue?: string }>()
+const props = defineProps<{ swatch: SourceSwatch }>()
+defineSlots<{ default(): unknown }>()
 const hex = computed(() => colorToHex(props.swatch.color))
 const backgroundColor = computed(() => colorToCss(props.swatch.color))
 </script>
@@ -16,15 +17,12 @@ const backgroundColor = computed(() => colorToCss(props.swatch.color))
     >
       <div class="h-full w-full" :style="{ backgroundColor }" />
     </div>
-    <div class="min-w-0 space-y-1">
+    <div class="min-w-0 flex-1 space-y-1">
       <p class="whitespace-pre-wrap break-words text-sm font-medium">
         {{ swatch.name || '(Unnamed layer)' }}
       </p>
       <p class="font-mono text-xs">{{ hex }}</p>
-      <p v-if="showPath" class="whitespace-pre-wrap break-words text-xs">
-        Full variable path: {{ swatch.name }}
-      </p>
-      <p v-if="issue" class="text-xs font-medium">{{ issue }}</p>
+      <slot />
       <p v-if="swatch.hidden" class="text-xs text-muted-foreground">
         Layer is hidden; its visible fill is included.
       </p>

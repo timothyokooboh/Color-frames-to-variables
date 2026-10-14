@@ -1,13 +1,22 @@
-import type { CollectionResponse, CollectionReview, PreviewResult } from '@color-frames/contracts'
+import type {
+  CollectionResponse,
+  CollectionReview,
+  PreviewResult,
+  ReviewCollectionRequest,
+} from '@color-frames/contracts'
 import { isCollectionRequest, isPreviewRequest } from '@color-frames/contracts'
 import { createPreviewController } from '../preview/controller'
-import { reviewNames } from './validation'
+import { inspectDestination, reviewDestination } from './destination'
 import { writeCollection } from './write'
 
 export function createCollectionController(host: PluginAPI) {
   const preview = createPreviewController(host)
   let snapshot: PreviewResult | null = null
-  let reviewed: CollectionReview | null = null
+  let reviewed: {
+    result: CollectionReview
+    request: ReviewCollectionRequest
+    target: string
+  } | null = null
   let busy = false
   let completed = false
   let revision = 0
@@ -32,6 +41,19 @@ export function createCollectionController(host: PluginAPI) {
       requestId: request.requestId,
       message,
     })
+    if (request.type === 'list-collections') {
+      try {
+        return {
+          type: 'collection-options',
+          requestId: request.requestId,
+          collections: (await host.variables.getLocalVariableCollectionsAsync()).map(
+            ({ id, name }) => ({ id, name }),
+          ),
+        }
+      } catch {
+        return error('Could not load collections. Try again.')
+      }
+    }
     if (busy || completed)
       return error('This batch is processing or complete. Start a new batch after completion.')
     if (request.type === 'review-collection') {
@@ -41,21 +63,33 @@ export function createCollectionController(host: PluginAPI) {
       if (!source || request.previewRequestId !== source.requestId)
         return error('Refresh the selection before reviewing.')
       try {
-        const collections = await host.variables.getLocalVariableCollectionsAsync()
+        const target = await inspectDestination(host, request.destination)
         if (version !== revision || busy || completed)
           return error('The preview changed. Review again.')
-        reviewed = reviewNames(
-          source,
-          request.collectionName,
-          collections.map((collection) => collection.name),
-          request.requestId,
+        const result = reviewDestination(source, request, target)
+        reviewed = {
+          result,
+          request,
+          target: JSON.stringify([
+            target.collection?.id,
+            target.collection?.name,
+            target.collection?.defaultModeId,
+          ]),
+        }
+        return result
+      } catch (cause) {
+        return error(
+          cause instanceof Error
+            ? cause.message
+            : 'Could not read local collections. Refresh the selection and try again.',
         )
-        return reviewed
-      } catch {
-        return error('Could not read local collections. Refresh the selection and try again.')
       }
     }
-    if (!snapshot || !reviewed?.canCreate || request.reviewRequestId !== reviewed.requestId)
+    if (
+      !snapshot ||
+      !reviewed?.result.canCreate ||
+      request.reviewRequestId !== reviewed.result.requestId
+    )
       return error('Resolve the blocking issues and review again.')
     busy = true
     const source = snapshot
@@ -63,21 +97,28 @@ export function createCollectionController(host: PluginAPI) {
     reviewed = null
     revision++
     try {
-      const collections = await host.variables.getLocalVariableCollectionsAsync()
+      const target = await inspectDestination(host, destination.request.destination)
       const current = preview({ type: 'preview-selection', requestId: source.requestId })
       if (JSON.stringify(current) !== JSON.stringify(source))
         return error('Sources or selection changed. Refresh the selection and review again.')
-      const checked = reviewNames(
-        source,
-        destination.collectionName,
-        collections.map((collection) => collection.name),
-        request.requestId,
-      )
-      if (!checked.canCreate)
+      const checked = reviewDestination(source, destination.request, target)
+      const targetKey = JSON.stringify([
+        target.collection?.id,
+        target.collection?.name,
+        target.collection?.defaultModeId,
+      ])
+      if (!checked.canCreate || targetKey !== destination.target)
         return error(
-          checked.collectionError || 'The batch is no longer valid. Refresh the selection.',
+          checked.collectionError || 'Destination changed. Review the destination again.',
         )
-      const result = writeCollection(host, source, destination.collectionName, request.requestId)
+      const result = writeCollection(
+        host,
+        source,
+        checked,
+        request.requestId,
+        target.collection,
+        target.variables.length > 0,
+      )
       completed = true
       return result
     } catch (cause) {

@@ -2,7 +2,7 @@
 
 A Figma Design plugin for converting selected color swatches into native color variables while preserving designer-defined names and paint values.
 
-**Current stage:** preview and create variables in a new collection. Inspect selected frames and rectangles, their exact names and HEX values, choose a unique collection name, and create native color variables. Invalid names and duplicate paths block creation; correct the source names and refresh. Results remain open with actual success/failure counts. Existing-collection writes and in-plugin name correction are future tickets. See [the MVP specification](https://github.com/timothyokooboh/Color-frames-to-variables/issues/1).
+**Current stage:** preview, refine, and create variables in new or existing collections. Edit proposed names without renaming source layers, exclude items, and resolve conflicts before creating. The collection picker defaults to Colors; other existing collections receive variables under a Colors group. Results separate created, failed, intentionally excluded, and unsupported items. Existing variables are never overwritten. See [the MVP specification](https://github.com/timothyokooboh/Color-frames-to-variables/issues/1).
 
 ## Setup
 

@@ -1,8 +1,33 @@
+export type Destination = { kind: 'new'; name: string } | { kind: 'existing'; id: string }
+export interface CollectionOption {
+  id: string
+  name: string
+}
+export interface ListCollectionsRequest {
+  type: 'list-collections'
+  requestId: number
+}
+export interface CollectionOptions {
+  type: 'collection-options'
+  requestId: number
+  collections: CollectionOption[]
+}
+export interface ProposedItem {
+  id: string
+  relativeName: string
+  included: boolean
+}
+export interface ReviewedItem extends ProposedItem {
+  fullPath: string
+  status: 'ready' | 'excluded' | 'invalid' | 'duplicate' | 'conflict'
+  message: string
+}
 export interface ReviewCollectionRequest {
   type: 'review-collection'
   requestId: number
   previewRequestId: number
-  collectionName: string
+  destination: Destination
+  items?: ProposedItem[]
 }
 export interface CreateCollectionRequest {
   type: 'create-collection'
@@ -17,6 +42,7 @@ export interface CollectionReview {
   type: 'collection-review'
   requestId: number
   collectionName: string
+  rows: ReviewedItem[]
   issues: NameIssue[]
   collectionError: string
   canCreate: boolean
@@ -29,6 +55,7 @@ export interface CreationResult {
   collectionId: string
   created: number
   failed: number
+  excluded: number
   unsupported: number
   errors: { id: string; name: string; message: string }[]
 }
@@ -37,5 +64,7 @@ export interface CreationError {
   requestId: number
   message: string
 }
-export type CollectionRequest = ReviewCollectionRequest | CreateCollectionRequest
-export type CollectionResponse = CollectionReview | CreationResult | CreationError
+export type CollectionRequest =
+  ReviewCollectionRequest | CreateCollectionRequest | ListCollectionsRequest
+export type CollectionResponse =
+  CollectionReview | CreationResult | CreationError | CollectionOptions
