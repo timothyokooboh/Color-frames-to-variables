@@ -12,7 +12,7 @@ One product and one domain, organized as a pnpm workspace to separate runtime en
 
 Both apps may import contracts. Neither imports the other. Separate TypeScript environments keep Figma globals out of the UI and DOM globals out of the controller. Contracts are consumed as TypeScript source by Vite and need no publishing pipeline.
 
-The contracts package defines the preview-selection command and preview-result/error responses. Both runtime boundaries validate incoming data. Request IDs correlate results and prevent older responses from replacing a refreshed preview. Add further commands alongside their actual behavior.
+The contracts package defines preview-selection, review-collection, and create-collection commands with validated responses. The collection controller retains the reviewed source snapshot and destination, revalidates before writing, and locks processing/completed batches. Name validation and write/result accounting are separate modules; incomplete allocations are removed when possible and reported if cleanup fails. Both runtime boundaries validate incoming data. Request IDs correlate results and prevent older responses from replacing a refreshed preview. Add further commands alongside their actual behavior.
 
 ## Component map
 
@@ -25,6 +25,8 @@ The contracts package defines the preview-selection command and preview-result/e
 | PreviewEmptyState      | Explain empty or ineligible selections                   | hasSkipped prop                       |
 | SwatchList / SwatchRow | Render eligible paints and display-only color formatting | swatches / swatch props               |
 | SkippedLayers          | Explain each excluded source layer                       | layers prop                           |
+
+CollectionDestination owns the labeled new-collection input; CreationAction owns the primary action; CreationResults owns completion counts, per-item errors, and Start new batch. SelectionPreview composes these with the existing preview. The useCollectionCreation composable owns destination review and submission state, ignores outdated replies, and keeps writes locked if a response is delayed. All state remains local to this feature.
 
 The useSelectionPreview composable owns messaging, loading/error state, response correlation, and listener/timer cleanup. Preview state is local to this feature, so it does not need a Pinia store. Pure display formatting never changes the original channel values carried in contracts.
 

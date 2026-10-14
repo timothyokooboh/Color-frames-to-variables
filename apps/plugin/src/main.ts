@@ -1,8 +1,8 @@
-import { createPreviewController } from './preview/controller'
+import { createCollectionController } from './creation/controller'
 
-const handle = createPreviewController(figma)
-figma.ui.onmessage = (message: unknown) => {
-  const response = handle(message)
+const handle = createCollectionController(figma)
+figma.ui.onmessage = async (message: unknown) => {
+  const response = await handle(message)
   if (response) figma.ui.postMessage(response)
 }
 figma.showUI(__html__, { width: 440, height: 560, themeColors: true })

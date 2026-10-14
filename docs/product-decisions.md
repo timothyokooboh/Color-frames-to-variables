@@ -4,9 +4,9 @@ These decisions clarify the supplied Color Frames to Variables PRD. Implementati
 
 ## Naming and destination
 
-- For existing collections, preserve an exact leading `Colors/` prefix; otherwise prepend `Colors/`. Matching is case-sensitive.
+- For existing collections other than exactly `Colors`, preserve an exact leading `Colors/` prefix; otherwise prepend `Colors/`. Matching is case-sensitive. An existing `Colors` collection receives exact relative names directly.
 - Rename edits affect only the proposed relative variable name. The destination prefix is handled separately, and source layers remain unchanged.
-- Destination strategy determines prefixing even when the existing collection is named Colors: a new collection receives `Brand/100`, whereas an existing Colors collection receives `Colors/Brand/100`. Preview the full path explicitly.
+- Both new collections and an existing `Colors` collection receive `Brand/100` directly. Other existing collections, such as `Primitives` and `Design Tokens`, receive `Colors/Brand/100`. Preview the full path explicitly; do not alter the source relative name.
 - Empty or whitespace-only names require renaming or skipping. Preserve spaces in otherwise valid names; never silently trim or correct them.
 
 ## Selection eligibility
@@ -30,6 +30,10 @@ These decisions clarify the supplied Color Frames to Variables PRD. Implementati
 - Offer Back to preview from results, alongside Retry failed when applicable and Start new batch. Keep successful items locked against resubmission while allowing failed items to be corrected.
 
 ## Interface
+
+- Use one destination dropdown listing existing local collections by name and ID. Label the existing default `Colors (Existing)`, and select it by default, or offer `Colors (Create new)` when it is absent. Show the create-default option only while that exact name is absent.
+- Preserve custom new-collection naming through `Create new collection…`, which reveals the name input. Apply the destination prefix policy above. This combined picker is implemented with the existing-collection ticket (#5).
+- Show validation errors and invalid field borders in the theme’s danger color, with accessible text and error associations.
 
 - Use a compact single-screen layout with the selection summary and destination controls above a scrollable preview and a fixed primary action at the bottom.
 - Show conflict controls within affected rows. Replace the preview with results after processing.

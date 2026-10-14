@@ -37,3 +37,5 @@ export interface PreviewError {
 export type PreviewResponse = PreviewResult | PreviewError
 
 export { isPreviewRequest, isPreviewResponse } from './validation'
+export type * from './creation'
+export { isCollectionRequest, isCollectionResponse } from './creation-validation'
