@@ -48,11 +48,10 @@ const conflicts = computed(() =>
     Destination: {{ review.collectionName }}
   </p>
   <button
-    v-if="conflicts"
     type="button"
-    :disabled="disabled"
-    class="rounded-md border border-input px-3 py-2 text-xs"
-    @click="emit('skipConflicts')"
+    :aria-disabled="disabled || !conflicts"
+    class="rounded-md border border-input px-3 py-2 text-xs focus-visible:outline-2 focus-visible:outline-ring aria-disabled:opacity-50"
+    @click="!disabled && conflicts && emit('skipConflicts')"
   >
     Skip all conflicts
   </button>

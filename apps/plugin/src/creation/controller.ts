@@ -9,6 +9,10 @@ import { createPreviewController } from '../preview/controller'
 import { inspectDestination, reviewDestination } from './destination'
 import { writeCollection } from './write'
 
+function destinationFingerprint(collection: VariableCollection | undefined) {
+  return JSON.stringify([collection?.id, collection?.name, collection?.defaultModeId])
+}
+
 export function createCollectionController(host: PluginAPI) {
   const preview = createPreviewController(host)
   let snapshot: PreviewResult | null = null
@@ -70,11 +74,7 @@ export function createCollectionController(host: PluginAPI) {
         reviewed = {
           result,
           request,
-          target: JSON.stringify([
-            target.collection?.id,
-            target.collection?.name,
-            target.collection?.defaultModeId,
-          ]),
+          target: destinationFingerprint(target.collection),
         }
         return result
       } catch (cause) {
@@ -102,11 +102,7 @@ export function createCollectionController(host: PluginAPI) {
       if (JSON.stringify(current) !== JSON.stringify(source))
         return error('Sources or selection changed. Refresh the selection and review again.')
       const checked = reviewDestination(source, destination.request, target)
-      const targetKey = JSON.stringify([
-        target.collection?.id,
-        target.collection?.name,
-        target.collection?.defaultModeId,
-      ])
+      const targetKey = destinationFingerprint(target.collection)
       if (!checked.canCreate || targetKey !== destination.target)
         return error(
           checked.collectionError || 'Destination changed. Review the destination again.',

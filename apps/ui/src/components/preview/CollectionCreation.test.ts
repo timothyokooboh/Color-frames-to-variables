@@ -152,7 +152,7 @@ it('skips every conflicting item, disables an empty batch, and preserves a custo
   const command = (type: string) =>
     [...send.mock.calls].reverse().find(([envelope]) => envelope.pluginMessage.type === type)![0]
       .pluginMessage
-  const wrapper = mount(SelectionPreview)
+  const wrapper = mount(SelectionPreview, { attachTo: document.body })
   reply({
     type: 'collection-options',
     requestId: command('list-collections').requestId,
@@ -189,10 +189,14 @@ it('skips every conflicting item, disables an empty batch, and preserves a custo
     })),
   })
   await flushPromises()
-  await wrapper
-    .findAll('button')
-    .find((button) => button.text() === 'Skip all conflicts')!
-    .trigger('click')
+  const skip = wrapper.findAll('button').find((button) => button.text() === 'Skip all conflicts')!
+  skip.element.focus()
+  await skip.trigger('click')
+  expect(document.activeElement).toBe(skip.element)
+  expect(skip.attributes('aria-disabled')).toBe('true')
+  const requestsAfterSkip = send.mock.calls.length
+  await skip.trigger('click')
+  expect(send.mock.calls).toHaveLength(requestsAfterSkip)
   expect(command('review-collection').items).toEqual([
     { id: 'one', relativeName: 'Brand/100', included: false },
     { id: 'two', relativeName: 'Brand/100', included: false },
