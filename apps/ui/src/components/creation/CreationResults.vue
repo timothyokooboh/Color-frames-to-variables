@@ -14,7 +14,7 @@ onMounted(() => heading.value?.focus())
     </h2>
     <p class="whitespace-pre-wrap break-words text-sm">Collection: {{ result.collectionName }}</p>
     <p role="status" class="text-sm">
-      {{ result.created }} created · {{ result.failed }} failed ·
+      {{ result.created }} created · {{ result.failed }} failed · {{ result.excluded }} excluded ·
       {{ result.unsupported }} unsupported
     </p>
     <p v-if="result.created === 0" class="text-sm">

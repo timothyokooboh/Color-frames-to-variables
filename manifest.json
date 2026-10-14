@@ -1,5 +1,5 @@
 {
-  "name": "Color Frames to Variables",
+  "name": "Color Palette to Variables",
   "api": "1.0.0",
   "main": "dist/plugin/code.js",
   "ui": "dist/ui/index.html",

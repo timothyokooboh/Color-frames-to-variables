@@ -1,6 +1,6 @@
 # Product decisions
 
-These decisions clarify the supplied Color Frames to Variables PRD. Implementation remains pending completion of the design discussion.
+These decisions clarify the supplied Color Palette to Variables PRD. Implementation remains pending completion of the design discussion.
 
 ## Naming and destination
 
