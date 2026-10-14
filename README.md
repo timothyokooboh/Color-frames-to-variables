@@ -2,7 +2,7 @@
 
 A Figma Design plugin for converting selected color swatches into native color variables while preserving designer-defined names and paint values.
 
-**Current stage:** selection preview. Inspect selected frames and rectangles, their exact names and paint values, and reasons for skipped layers. Variable creation is not implemented yet. See [the MVP specification](https://github.com/timothyokooboh/Color-frames-to-variables/issues/1).
+**Current stage:** preview and create variables in a new collection. Inspect selected frames and rectangles, their exact names and HEX values, choose a unique collection name, and create native color variables. Invalid names and duplicate paths block creation; correct the source names and refresh. Results remain open with actual success/failure counts. Existing-collection writes and in-plugin name correction are future tickets. See [the MVP specification](https://github.com/timothyokooboh/Color-frames-to-variables/issues/1).
 
 ## Setup
 
@@ -33,7 +33,7 @@ If your pnpm shim is available, `pnpm` and `corepack pnpm` are interchangeable. 
 1. Run `pnpm build`.
 2. Import the root `manifest.json` from Figma's development plugin menu.
 3. If Figma requires registration, create a development plugin and copy its assigned ID into the root manifest. This scaffold does not fabricate a published plugin ID.
-4. Select color swatches and run the plugin to see the preview. Use Refresh selection after changing your selection.
+4. Select color swatches and run the plugin to see the preview. Use Refresh selection after changing your selection. Review the destination and full paths, then choose Create variables. Original RGB channels and paint alpha are written without conversion through HEX. A stale selection requires refreshed review.
 
 Use `pnpm dev:plugin` while developing and rerun the plugin after rebuilds. The manifest denies runtime network access and the UI bundle is self-contained.
 

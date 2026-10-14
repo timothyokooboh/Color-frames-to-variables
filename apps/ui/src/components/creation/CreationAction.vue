@@ -1,0 +1,17 @@
+<script setup lang="ts">
+defineProps<{ count: number; enabled: boolean; submitting: boolean }>()
+const emit = defineEmits<{ create: [] }>()
+</script>
+
+<template>
+  <div class="sticky bottom-0 shrink-0 border-t border-border bg-background py-3">
+    <button
+      type="button"
+      :aria-disabled="!enabled"
+      class="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground focus-visible:outline-2 focus-visible:outline-ring aria-disabled:opacity-50"
+      @click="enabled && emit('create')"
+    >
+      {{ submitting ? 'Creating variables…' : `Create ${count} variable${count === 1 ? '' : 's'}` }}
+    </button>
+  </div>
+</template>
