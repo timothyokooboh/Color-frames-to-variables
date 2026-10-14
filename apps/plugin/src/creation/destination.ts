@@ -31,7 +31,6 @@ export function reviewDestination(
   snapshot: PreviewResult,
   request: ReviewCollectionRequest,
   target: Awaited<ReturnType<typeof inspectDestination>>,
-  unprefixed = false,
 ) {
   const name =
     request.destination.kind === 'new' ? request.destination.name : target.collection!.name
@@ -41,7 +40,7 @@ export function reviewDestination(
     request.destination.kind === 'new' ? target.collections.map(({ name }) => name) : [],
     request.requestId,
     request.items,
-    !unprefixed && request.destination.kind === 'existing' && name !== 'Colors',
+    name !== 'Colors',
   )
   const byPath = new Map(target.variables.map((variable) => [variable.name, variable]))
   for (const row of result.rows) {

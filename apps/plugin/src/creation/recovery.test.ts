@@ -1,13 +1,13 @@
 import { expect, it, vi } from 'vitest'
 import { environment, review } from './test-environment'
 
-it('retries only failed items in the retained collection with original unprefixed paths and cumulative results', async () => {
+it('retries only failed items in the retained collection with consistent prefixed paths and cumulative results', async () => {
   const env = environment(3)
   const allocate = env.host.variables.createVariable
   const fail = vi
     .spyOn(env.host.variables, 'createVariable')
     .mockImplementation((name, collection, type) => {
-      if (name === 'Brand/1') throw new Error('Temporary allocation failure')
+      if (name === 'Colors/Brand/1') throw new Error('Temporary allocation failure')
       return allocate(name, collection, type)
     })
   await review(env, 'Primitives')
@@ -33,7 +33,7 @@ it('retries only failed items in the retained collection with original unprefixe
       destination: recovered.destination,
       items: recovered.items,
     }),
-  ).toMatchObject({ canCreate: true, rows: [{ fullPath: 'Brand/1' }] })
+  ).toMatchObject({ canCreate: true, rows: [{ fullPath: 'Colors/Brand/1' }] })
   const request = { type: 'create-collection', requestId: 6, reviewRequestId: 5 }
   const retry = env.handle(request)
   expect(await env.handle(request)).toMatchObject({ type: 'creation-error' })
@@ -44,7 +44,11 @@ it('retries only failed items in the retained collection with original unprefixe
     collectionId: 'collection-0',
   })
   expect(await env.handle(request)).toMatchObject({ type: 'creation-error' })
-  expect(env.variables.map(({ name }) => name).sort()).toEqual(['Brand 100', 'Brand/1', 'Brand/2'])
+  expect(env.variables.map(({ name }) => name).sort()).toEqual([
+    'Colors/Brand 100',
+    'Colors/Brand/1',
+    'Colors/Brand/2',
+  ])
   expect(env.collections).toHaveLength(1)
 })
 
@@ -87,7 +91,7 @@ it('recovers a surviving allocation without duplicating its path after an all-fa
     await env.handle({ type: 'create-collection', requestId: 6, reviewRequestId: 5 }),
   ).toMatchObject({ created: 1, updated: 0, failed: 0 })
   expect(env.variables).toHaveLength(1)
-  expect(env.variables[0]?.name).toBe('Brand 100')
+  expect(env.variables[0]?.name).toBe('Colors/Brand 100')
   expect(env.collections).toHaveLength(1)
 })
 

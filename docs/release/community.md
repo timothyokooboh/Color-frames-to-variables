@@ -1,6 +1,6 @@
 # Community submission package
 
-Status: **not submitted**. This package is prepared for owner review. Release gates remain in [the verification record](../verification/release.md); do not describe this build as fully verified in desktop and browser yet.
+Status: **submitted for Figma review on 2026-10-14**, confirmed by the owner’s submission screenshot. Approval is pending. Release gates remain in [the verification record](../verification/release.md); do not describe this build as fully verified in desktop and browser yet.
 
 ## Listing copy
 
@@ -16,7 +16,7 @@ Turn selected color swatches into native Figma color variables while keeping the
 2. Review the colors and names, then choose a new or existing local collection.
 3. Rename or exclude items, resolve conflicts, and create your variables.
 
-Names such as `Brand 100` and `Brand/100` stay as written. New collections and an existing `Colors` collection receive your names directly. Other existing collections receive a `Colors/` prefix.
+Names such as `Brand 100` and `Brand/100` stay as written. New or existing collections named exactly `Colors` receive your names directly. Every other collection receives a `Colors/` prefix, without duplicating an existing leading `Colors/`.
 
 Existing color variables change only after individual overwrite approval. Compare the existing and proposed color before deciding. Results show actual created, updated, failed, excluded, and unsupported counts. Correct and retry failed items while successful writes remain locked for the current session.
 
@@ -41,10 +41,10 @@ Free and open source under MIT. No plugin account, analytics, backend, or extern
 
 1. Review the remaining release gates and the asset/listing copy. Complete browser acceptance before claiming cross-host compatibility.
 2. In Figma desktop, open Plugins → Development → Manage plugins in development. Choose the production plugin, not the native acceptance harness.
-3. Register or select the owner’s plugin identity. The root manifest currently has no `id`; Figma assigns it during creation/publishing. Preserve that identity for future updates. Do not invent an ID.
+3. Register or select the owner’s plugin identity. The root manifest now records Figma-assigned ID `1692281770771805809`. Preserve that identity for future updates. Do not invent an ID.
 4. Build from the reviewed commit with a frozen lockfile. Ensure the production manifest still points to `dist/plugin/code.js` and `dist/ui/index.html`, with `allowedDomains: ["none"]`.
 5. Use Figma’s current publishing dialog to set the owner Community profile, description, source/support URLs, icon, cover, and any required contact details. The owner must accept any required legal terms themselves.
-6. Submit only when the outstanding verification gates are resolved. Record the submission date, commit, plugin ID, review status, and Community URL below; none is currently assigned by this repository.
+6. Submit only when the outstanding verification gates are resolved. Record the submission date, commit, plugin ID, review status, and Community URL below; the assigned ID and submission status are recorded below.
 7. Install the distributed build in Figma browser and repeat the matrix. If account-level distribution is available before public submission, use it for browser checks; otherwise record the review/distribution dependency explicitly and do not claim browser acceptance prematurely.
 
 ## Submission record
@@ -52,10 +52,10 @@ Free and open source under MIT. No plugin account, analytics, backend, or extern
 | Field                | Value                                                |
 | -------------------- | ---------------------------------------------------- |
 | Owner                | Timothy Okooboh; Community profile selection pending |
-| Submission date      | Not submitted                                        |
-| Plugin ID            | Not assigned in repository                           |
+| Submission date      | 2026-10-14                                           |
+| Plugin ID            | `1692281770771805809`                                |
 | Community URL        | Not available                                        |
-| Review status        | Not requested                                        |
+| Review status        | Submitted; awaiting review                           |
 | Browser distribution | Not available for this local development build       |
 
 ## Platform references

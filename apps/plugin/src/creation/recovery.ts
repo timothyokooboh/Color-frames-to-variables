@@ -10,7 +10,6 @@ export interface CompletedBatch {
   result: CreationResult
   source: PreviewResult
   request: ReviewCollectionRequest
-  unprefixed: boolean
 }
 
 export async function readSources(host: PluginAPI, source: PreviewResult, requestId: number) {
