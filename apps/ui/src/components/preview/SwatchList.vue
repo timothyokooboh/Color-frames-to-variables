@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SourceSwatch } from '@color-frames/contracts'
 import SwatchRow from './SwatchRow.vue'
-defineProps<{ swatches: SourceSwatch[] }>()
+defineProps<{ swatches: readonly SourceSwatch[] }>()
 </script>
 
 <template>

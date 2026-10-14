@@ -17,7 +17,9 @@ const backgroundColor = computed(() => colorToCss(props.swatch.color))
       <div class="h-full w-full" :style="{ backgroundColor }" />
     </div>
     <div class="min-w-0 space-y-1">
-      <p class="break-words text-sm font-medium">{{ swatch.name || '(Unnamed layer)' }}</p>
+      <p class="whitespace-pre-wrap break-words text-sm font-medium">
+        {{ swatch.name || '(Unnamed layer)' }}
+      </p>
       <p class="font-mono text-xs">{{ hex }}</p>
       <p class="break-words font-mono text-xs text-muted-foreground">
         RGBA (0–1): {{ swatch.color.r }}, {{ swatch.color.g }}, {{ swatch.color.b }},

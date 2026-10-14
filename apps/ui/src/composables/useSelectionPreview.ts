@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, shallowRef } from 'vue'
+import { onMounted, onUnmounted, readonly, shallowRef } from 'vue'
 import { isPreviewResponse, type PreviewRequest, type PreviewResult } from '@color-frames/contracts'
 
 export function useSelectionPreview() {
@@ -21,14 +21,19 @@ export function useSelectionPreview() {
   }
 
   function receive(event: MessageEvent<unknown>) {
-    if (event.source !== window.parent || typeof event.data !== 'object' || event.data === null)
-      return
+    // Figma relays through an ancestor frame, not necessarily the immediate parent.
+    const fromFigma =
+      event.origin === 'https://www.figma.com' || event.origin === 'https://figma.com'
+    if (!fromFigma || typeof event.data !== 'object' || event.data === null) return
     const message: unknown = Reflect.get(event.data, 'pluginMessage')
     if (!isPreviewResponse(message) || message.requestId !== requestId) return
     clearTimeout(timeout)
     loading.value = false
     if (message.type === 'preview-error') error.value = message.message
-    else result.value = message
+    else {
+      error.value = ''
+      result.value = message
+    }
   }
 
   onMounted(() => {
@@ -39,5 +44,5 @@ export function useSelectionPreview() {
     clearTimeout(timeout)
     window.removeEventListener('message', receive)
   })
-  return { result, loading, error, refresh }
+  return { result: readonly(result), loading: readonly(loading), error: readonly(error), refresh }
 }

@@ -8,6 +8,34 @@ afterEach(() => {
 })
 
 describe('selection preview', () => {
+  it('keeps the same refresh control mounted and accepts a successful response after timeout', async () => {
+    vi.useFakeTimers()
+    vi.spyOn(window.parent, 'postMessage').mockImplementation(() => {})
+    const wrapper = mount(SelectionPreview, { attachTo: document.body })
+    const reply = (requestId: number) =>
+      window.dispatchEvent(
+        new MessageEvent('message', {
+          source: null,
+          origin: 'https://www.figma.com',
+          data: { pluginMessage: { type: 'preview-result', requestId, swatches: [], skipped: [] } },
+        }),
+      )
+    reply(1)
+    await wrapper.vm.$nextTick()
+    const button = wrapper.get('button').element
+    button.focus()
+    await wrapper.get('button').trigger('click')
+    expect(wrapper.get('button').element).toBe(button)
+    expect(document.activeElement).toBe(button)
+    await vi.advanceTimersByTimeAsync(10000)
+    expect(wrapper.text()).toContain('No response from Figma')
+    reply(2)
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+    expect(wrapper.text()).toContain('Select your color swatches')
+    expect(document.activeElement).toBe(button)
+    wrapper.unmount()
+  })
   it('ignores malformed or foreign responses and times out with a useful recovery action', async () => {
     vi.useFakeTimers()
     vi.spyOn(window.parent, 'postMessage').mockImplementation(() => {})
@@ -15,6 +43,7 @@ describe('selection preview', () => {
     window.dispatchEvent(
       new MessageEvent('message', {
         source: window.parent,
+        origin: 'https://www.figma.com',
         data: {
           pluginMessage: { type: 'preview-result', requestId: 1, swatches: [null], skipped: [] },
         },
@@ -23,6 +52,7 @@ describe('selection preview', () => {
     window.dispatchEvent(
       new MessageEvent('message', {
         source: null,
+        origin: 'https://example.com',
         data: {
           pluginMessage: { type: 'preview-result', requestId: 1, swatches: [], skipped: [] },
         },
@@ -41,7 +71,11 @@ describe('selection preview', () => {
     const wrapper = mount(SelectionPreview)
     const reply = (pluginMessage: unknown) =>
       window.dispatchEvent(
-        new MessageEvent('message', { source: window.parent, data: { pluginMessage } }),
+        new MessageEvent('message', {
+          source: window.parent,
+          origin: 'https://www.figma.com',
+          data: { pluginMessage },
+        }),
       )
     reply({
       type: 'preview-error',
@@ -65,6 +99,7 @@ describe('selection preview', () => {
     window.dispatchEvent(
       new MessageEvent('message', {
         source: window.parent,
+        origin: 'https://www.figma.com',
         data: {
           pluginMessage: {
             type: 'preview-result',
@@ -107,6 +142,7 @@ describe('selection preview', () => {
     window.dispatchEvent(
       new MessageEvent('message', {
         source: window.parent,
+        origin: 'https://www.figma.com',
         data: {
           pluginMessage: { type: 'preview-result', requestId: 1, swatches: [], skipped: [] },
         },

@@ -10,23 +10,15 @@ const { result, loading, error, refresh } = useSelectionPreview()
 
 <template>
   <div class="space-y-4" :aria-busy="loading">
-    <p v-if="loading" role="status" class="text-sm text-muted-foreground">Reading selection…</p>
-    <div v-else-if="error" class="space-y-3">
-      <p role="alert" class="text-sm">{{ error }}</p>
-      <button
-        type="button"
-        class="rounded-md border border-input px-3 py-2 text-sm font-medium hover:bg-accent"
-        @click="refresh"
-      >
-        Try again
-      </button>
-    </div>
-    <template v-else-if="result">
-      <SelectionSummary
-        :eligible="result.swatches.length"
-        :skipped="result.skipped.length"
-        @refresh="refresh"
-      />
+    <SelectionSummary
+      :eligible="result?.swatches.length ?? 0"
+      :skipped="result?.skipped.length ?? 0"
+      :loading="loading"
+      :has-error="Boolean(error)"
+      @refresh="refresh"
+    />
+    <p v-if="error" role="alert" class="text-sm">{{ error }}</p>
+    <template v-else-if="result && !loading">
       <PreviewEmptyState
         v-if="result.swatches.length === 0"
         :has-skipped="result.skipped.length > 0"
