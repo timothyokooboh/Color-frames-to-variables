@@ -44,19 +44,27 @@ export function reviewNames(
           : ''
     return { ...item, fullPath: path(name), status, message }
   })
-  const issues = rows.filter(({ message }) => message).map(({ id, message }) => ({ id, message }))
   const collectionError = !collectionName.trim()
     ? 'Enter a collection name.'
     : existingNames.includes(collectionName)
       ? 'A local collection with this name already exists.'
       : ''
-  return {
+  return finalizeReview({
     type: 'collection-review',
     requestId,
     collectionName,
-    issues,
+    issues: [],
     rows,
     collectionError,
-    canCreate: rows.some((item) => item.included) && !issues.length && !collectionError,
-  }
+    canCreate: false,
+  })
+}
+
+export function finalizeReview(review: CollectionReview) {
+  review.issues = review.rows
+    .filter(({ message }) => message)
+    .map(({ id, message }) => ({ id, message }))
+  review.canCreate =
+    review.rows.some(({ included }) => included) && !review.issues.length && !review.collectionError
+  return review
 }

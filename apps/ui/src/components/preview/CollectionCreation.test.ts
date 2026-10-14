@@ -80,13 +80,14 @@ it('picks existing Colors by ID, edits proposed names, and creates only the revi
     collectionId: 'primitives',
     collectionEmpty: false,
     created: 1,
+    updated: 0,
     failed: 0,
     excluded: 0,
     unsupported: 0,
     errors: [],
   })
   await flushPromises()
-  expect(wrapper.text()).toContain('1 created · 0 failed · 0 excluded · 0 unsupported')
+  expect(wrapper.text()).toContain('1 created · 0 updated · 0 failed · 0 excluded · 0 unsupported')
   expect(document.activeElement?.textContent?.trim()).toBe('Creation results')
   await wrapper
     .findAll('button')

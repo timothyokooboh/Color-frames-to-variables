@@ -1,5 +1,11 @@
 <script setup lang="ts">
-defineProps<{ count: number; enabled: boolean; submitting: boolean }>()
+defineProps<{
+  count: number
+  enabled: boolean
+  submitting: boolean
+  retry?: boolean
+  updates?: boolean
+}>()
 const emit = defineEmits<{ create: [] }>()
 </script>
 
@@ -11,7 +17,11 @@ const emit = defineEmits<{ create: [] }>()
       class="w-full rounded-md bg-primary px-4 py-3 text-sm font-semibold shadow-sm enabled:active:brightness-95 text-primary-foreground focus-visible:outline-2 focus-visible:outline-ring aria-disabled:opacity-50"
       @click="enabled && emit('create')"
     >
-      {{ submitting ? 'Creating variables…' : `Create ${count} variable${count === 1 ? '' : 's'}` }}
+      {{
+        submitting
+          ? 'Applying changes…'
+          : `${retry ? 'Retry' : updates ? 'Apply' : 'Create'} ${count} ${updates ? 'change' : 'variable'}${count === 1 ? '' : 's'}`
+      }}
     </button>
   </div>
 </template>

@@ -10,7 +10,10 @@ const props = defineProps<{
   disabled: boolean
 }>()
 const emit = defineEmits<{
-  edit: [id: string, change: Partial<Pick<ProposedItem, 'relativeName' | 'included'>>]
+  edit: [
+    id: string,
+    change: Partial<Pick<ProposedItem, 'relativeName' | 'included' | 'overwriteToken'>>,
+  ]
 }>()
 const rowsById = computed(() => new Map(props.rows.map((item) => [item.id, item])))
 const itemsById = computed(() => new Map(props.items.map((item) => [item.id, item])))
